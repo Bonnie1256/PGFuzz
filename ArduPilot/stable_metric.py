@@ -205,7 +205,7 @@ def change_parameter():
 
     # 2) Set parameter value
     master.mav.param_set_send(master.target_system, master.target_component,
-                            param_name,
+                            param_name.encode("ascii")[:16],
                             param_value,
                             mavutil.mavlink.MAV_PARAM_TYPE_REAL32)
     # Read ACK
@@ -252,7 +252,7 @@ def change_wind_dir(value):
             wind_dir = 180
 
     master.mav.param_set_send(master.target_system, master.target_component,
-                            'SIM_WIND_DIR',
+                            b'SIM_WIND_DIR',
                             wind_dir,
                             mavutil.mavlink.MAV_PARAM_TYPE_REAL32)
 
@@ -299,7 +299,7 @@ def change_wind(value):
         rand_wind = 0
 
     master.mav.param_set_send(master.target_system, master.target_component,
-                            'SIM_WIND_SPD',
+                            b'SIM_WIND_SPD',
                             rand_wind,
                             mavutil.mavlink.MAV_PARAM_TYPE_REAL32)
 
@@ -369,7 +369,7 @@ def handle_attitude(msg):
         attitude_data = (msg.roll, msg.pitch, msg.yaw, msg.rollspeed,
                                 msg.pitchspeed, msg.yawspeed)
         print("Roll\tPit\tYaw\tRSpd\tPSpd\tYSpd")
-        print(f"%0.6f\t%0.6f\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t" % attitude_data)
+        print("%0.6f\t%0.6f\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t" % attitude_data)
 
 #------------------------------------------------------------------------------------
 def handle_target(msg):
@@ -387,7 +387,7 @@ def handle_target(msg):
     """
     reference = (msg.nav_roll, msg.nav_pitch, msg.nav_bearing, msg.alt_error, msg.aspd_error, msg.xtrack_error)
     print("\nRF_Roll\tRF_Pitch\tRF_Head\tRF_Alt\tRF_Spd\tRF_XY")
-    print(f"%0.2f\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t\n" % reference)
+    print("%0.2f\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t%0.2f\t\n" % reference)
 
 
 #------------------------------------------------------------------------------------

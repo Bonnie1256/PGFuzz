@@ -198,7 +198,7 @@ def set_preconditions(filepath):
         row = line.rstrip().split(' ')
 
         master.mav.param_set_send(master.target_system, master.target_component,
-                                  row[0],
+                                  row[0].encode("ascii")[:16],
                                   float(row[1]),
                                   mavutil.mavlink.MAV_PARAM_TYPE_REAL32)
         time.sleep(1)
@@ -413,7 +413,7 @@ def change_parameter(selected_param):
 
     # 2) Set parameter value
     master.mav.param_set_send(master.target_system, master.target_component,
-                              param_name,
+                              param_name.encode("ascii")[:16],
                               param_value,
                               mavutil.mavlink.MAV_PARAM_TYPE_REAL32)
 
@@ -2359,7 +2359,7 @@ def execute_env(num):
         print("@@@[Reuse stored input pair] (%s, %s)@@@" % (Current_input, Current_input_val))
 
     master.mav.param_set_send(master.target_system, master.target_component,
-                              Current_input,
+                              Current_input.encode("ascii")[:16],
                               float(Current_input_val),
                               mavutil.mavlink.MAV_PARAM_TYPE_REAL32)
 

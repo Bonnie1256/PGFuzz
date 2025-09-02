@@ -147,7 +147,7 @@ def change_parameter():
 
         # 2) Set parameter value
         master.mav.param_set_send(master.target_system, master.target_component,
-                                param_name,
+                                param_name.encode("ascii")[:16],
                                 param_value,
                                 mavutil.mavlink.MAV_PARAM_TYPE_REAL32)
         # Read ACK

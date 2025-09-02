@@ -250,7 +250,7 @@ for i in range(0, 1308):
 
 	print("%s:%d" % (paramsName[i], Min_param))
 	master.mav.param_set_send(master.target_system, master.target_component,
-                                paramsName[i],
+                                paramsName[i].encode("ascii")[:16],
                                 Min_param,
                                 mavutil.mavlink.MAV_PARAM_TYPE_REAL32)
 
