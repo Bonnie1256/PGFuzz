@@ -1,5 +1,7 @@
-# PGFuzz
+I have changed PGFuzz to python3, and fixed some bugs to run it on lastest ArduPilot code base.
 
+
+# PGFuzz
 PGFuzz is a policy-guided fuzzing framework. You can freely use it to define and find more bugs. By specifying a metric temporal logic (MTL) formula, PGFuzz is able to mutate inputs related to the formula and to discover more interesting bug cases. Many of the ideas behind PGFuzz are documented in a paper published at NDSS 2021.
 
 <p>
@@ -13,29 +15,45 @@ We assume that you already finished setup for executing ArduPilot, PX4 and Papar
 - <a href="https://docs.px4.io/master/en/dev_setup/dev_env_linux_ubuntu.html" target="_blank"> PX4 setup </a>
 - <a href="https://wiki.paparazziuav.org/wiki/NPS" target="_blank"> Paparazzi setup </a>
 
-- <b>Installing pymavlink on Ubuntu 20.04</b> <br>
-Installing pymavlink using pip is broken right now. <br>
-Instead, you can install pymavlink from source code.
-```
-sudo apt-get install gcc python-dev libxml2-dev libxslt-dev
-sudo apt-get install python-numpy python-pytest
-sudo apt install curl
-sudo apt install python2
-curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
-sudo python2 get-pip.py
-sudo python2 -m pip install --upgrade future lxml
+- <b>Installing pymavlink on Ubuntu 22.04</b> <br>
 
-git clone https://github.com/ArduPilot/mavlink.git
-cd mavlink
-git submodule update --init --recursive
-cd pymavlink
-sudo MDEF=`pwd`/../message_definitions python2 -m pip install . -v
-```
+[//]: # (Installing pymavlink using pip is broken right now. <br>)
+
+[//]: # (Instead, you can install pymavlink from source code.)
+
+[//]: # (```)
+
+[//]: # (sudo apt-get install gcc python-dev libxml2-dev libxslt-dev)
+
+[//]: # (sudo apt-get install python-numpy python-pytest)
+
+[//]: # (sudo apt install curl)
+
+[//]: # (sudo apt install python2)
+
+[//]: # (curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py)
+
+[//]: # (sudo python2 get-pip.py)
+
+[//]: # (sudo python2 -m pip install --upgrade future lxml)
+
+[//]: # ()
+[//]: # (git clone https://github.com/ArduPilot/mavlink.git)
+
+[//]: # (cd mavlink)
+
+[//]: # (git submodule update --init --recursive)
+
+[//]: # (cd pymavlink)
+
+[//]: # (sudo MDEF=`pwd`/../message_definitions python2 -m pip install . -v)
+
+[//]: # (```)
 
 ## 2. Download PGFuzz
 ```bash
 cd ~
-git clone https://github.com/purseclab/PGFuzz.git pgfuzz
+git clone https://github.com/Bonnie1256/PGFuzz.git pgfuzz
 ```
 
 ## 3. Download a virtual machine image
