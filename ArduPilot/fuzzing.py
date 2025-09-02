@@ -1095,7 +1095,7 @@ def calculate_distance(guidance):
 
     # P5
     # Request parameter
-    master.mav.param_request_read_send(master.target_system, master.target_component, 'CHUTE_ALT_MIN', -1)
+    master.mav.param_request_read_send(master.target_system, master.target_component, b'CHUTE_ALT_MIN', -1)
 
     target_param = "CHUTE_ALT_MIN"
     count = 0
@@ -1125,7 +1125,7 @@ def calculate_distance(guidance):
     # P2
     # Request parameter
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'RTL_ALT', -1)
+        master.target_system, master.target_component, b'RTL_ALT', -1)
 
     target_param = "RTL_ALT"
     count = 0
@@ -1169,7 +1169,7 @@ def calculate_distance(guidance):
     # P1: (ALT_t - RTL_ALT)/ALT_t
     # Request parameter
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'RTL_ALT', -1)
+        master.target_system, master.target_component, b'RTL_ALT', -1)
 
     target_param = "RTL_ALT"
     count = 0
@@ -1221,7 +1221,7 @@ def calculate_distance(guidance):
     # P1: (ALT_t - RTL_ALT)/ALT_t
     # Request parameter
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'RTL_ALT', -1)
+        master.target_system, master.target_component, b'RTL_ALT', -1)
 
     target_param = "RTL_ALT"
     count = 0
@@ -1430,7 +1430,7 @@ def calculate_distance(guidance):
 
     # Request parameter
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'EK2_ALT_SOURCE', -1)
+        master.target_system, master.target_component, b'EK2_ALT_SOURCE', -1)
 
     target_param = "EK2_ALT_SOURCE"
     count = 0
@@ -1700,7 +1700,7 @@ def calculate_distance(guidance):
     target_param_value = 0
 
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'LAND_SPEED_HIGH', -1)
+        master.target_system, master.target_component, b'LAND_SPEED_HIGH', -1)
 
     target_param = "LAND_SPEED_HIGH"
     count = 0
@@ -1714,7 +1714,7 @@ def calculate_distance(guidance):
         target_param_ready = 0
 
         master.mav.param_request_read_send(
-            master.target_system, master.target_component, 'WPNAV_SPEED_DN', -1)
+            master.target_system, master.target_component, b'WPNAV_SPEED_DN', -1)
 
         target_param = "WPNAV_SPEED_DN"
         count = 0
@@ -1762,7 +1762,7 @@ def calculate_distance(guidance):
     target_param_value = 0
 
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'LAND_SPEED', -1)
+        master.target_system, master.target_component, b'LAND_SPEED', -1)
 
     target_param = "LAND_SPEED"
     count = 0
@@ -1866,7 +1866,7 @@ def calculate_distance(guidance):
     target_param_value = 0
 
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'SIM_BARO_DISABLE', -1)
+        master.target_system, master.target_component, b'SIM_BARO_DISABLE', -1)
 
     target_param = "SIM_BARO_DISABLE"
     count = 0
@@ -1905,7 +1905,7 @@ def calculate_distance(guidance):
     target_param_value = 0
 
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'FS_THR_VALUE', -1)
+        master.target_system, master.target_component, b'FS_THR_VALUE', -1)
 
     target_param = "FS_THR_VALUE"
     count = 0
@@ -1940,7 +1940,7 @@ def calculate_distance(guidance):
     target_param_value = 0
 
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'FS_THR_VALUE', -1)
+        master.target_system, master.target_component, b'FS_THR_VALUE', -1)
 
     target_param = "FS_THR_VALUE"
     count = 0
@@ -1981,7 +1981,7 @@ def calculate_distance(guidance):
     target_param_value = 0
 
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'PILOT_SPEED_UP', -1)
+        master.target_system, master.target_component, b'PILOT_SPEED_UP', -1)
 
     target_param = "PILOT_SPEED_UP"
     count = 0
@@ -2095,7 +2095,7 @@ def calculate_distance(guidance):
     target_param_value = 0
 
     master.mav.param_request_read_send(
-        master.target_system, master.target_component, 'FS_EKF_ACTION', -1)
+        master.target_system, master.target_component, b'FS_EKF_ACTION', -1)
 
     target_param = "FS_EKF_ACTION"
     count = 0
