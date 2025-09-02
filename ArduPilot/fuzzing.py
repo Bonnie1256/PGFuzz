@@ -32,7 +32,7 @@ import sys, os, getopt
 
 # ------------------------------------------------------------------------------------
 # Global variables
-master = mavutil.mavlink_connection('udp:127.0.0.1:14551')
+master = mavutil.mavlink_connection('udp:127.0.0.1:14550')
 home_altitude = 0
 home_lat = 0
 home_lon = 0
@@ -2416,6 +2416,16 @@ def pick_up_cmd():
 # ------------------------------------------------------------------------------------
 def main(argv):
     global Precondition_path
+    global drone_status
+    global executing_commands
+    global home_altitude
+    global current_altitude
+    global Armed
+    global Parachute_on
+    global count_main_loop
+    global goal_throttle
+    global RV_alive
+    global hit_ground
 
     # ------------------------------------------------------------------------------------
     # ------------------------------------------------------------------------------------
@@ -2488,25 +2498,22 @@ def main(argv):
     # Get mode ID
     mode_id = master.mode_mapping()[mode]
 
-    master.mav.set_mode_send(
-        master.target_system,
-        mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
-        mode_id)
+    # change to command_long
+    master.mav.command_long_send(master.target_system, master.target_component,
+                            mavutil.mavlink.MAV_CMD_DO_SET_MODE, 0,
+                            mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, mode_id, 0, 0, 0, 0, 0)
 
-    # Check ACK
-    ack = False
-    while not ack:
-        # Wait for ACK command
-        ack_msg = master.recv_match(type='COMMAND_ACK', blocking=True)
-        ack_msg = ack_msg.to_dict()
+    ack_msg = master.recv_match(type='COMMAND_ACK', blocking=True, timeout=5)
+    if ack_msg is None:
+        print("Set mode ACK not received yet")
 
-        # Check if command in the same in `set_mode`
-        if ack_msg['command'] != mavutil.mavlink.MAVLINK_MSG_ID_SET_MODE:
-            continue
+    ack_msg = ack_msg.to_dict()
 
-        # Print the ACK result !
-        print(mavutil.mavlink.enums['MAV_RESULT'][ack_msg['result']].description)
-        break
+    # Check if command in the same in `set_mode`
+    if ack_msg['command'] != mavutil.mavlink.MAV_CMD_DO_SET_MODE:
+        print("This is not a ACK for set_mode command")
+    # Print the ACK result !
+    print(mavutil.mavlink.enums['MAV_RESULT'][ack_msg['result']].description)
 
     master.mav.command_long_send(
         master.target_system,
@@ -2518,7 +2525,10 @@ def main(argv):
     ack = False
     while not ack:
         # Wait for ACK command
-        ack_msg = master.recv_match(type='COMMAND_ACK', blocking=True)
+        ack_msg = master.recv_match(type='COMMAND_ACK', blocking=True, timeout=5)
+        if ack_msg is None:
+            print("ARMING ACK not received yet")
+            continue
         ack_msg = ack_msg.to_dict()
 
         print(mavutil.mavlink.enums['MAV_RESULT'][ack_msg['result']].description)
@@ -2542,7 +2552,10 @@ def main(argv):
     ack = False
     while not ack:
         # Wait for ACK command
-        ack_msg = master.recv_match(type='COMMAND_ACK', blocking=True)
+        ack_msg = master.recv_match(type='COMMAND_ACK', blocking=True, timeout=5)
+        if ack_msg is None:
+            print("TAKEOFF ACK not received yet")
+            continue
         ack_msg = ack_msg.to_dict()
 
         print(mavutil.mavlink.enums['MAV_RESULT'][ack_msg['result']].description)
@@ -2595,16 +2608,7 @@ def main(argv):
     # Main loop
     while True:
 
-        global drone_status
-        global executing_commands
-        global home_altitude
-        global current_altitude
-        global Armed
-        global Parachute_on
-        global count_main_loop
-        global goal_throttle
-        global RV_alive
-        global hit_ground
+
 
         # print("[Debug] drone_status:%d" %drone_status)
 
