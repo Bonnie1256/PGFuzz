@@ -616,7 +616,7 @@ def handle_param(msg):
     global target_param_value
 
     message = msg.to_dict()
-    if message['param_id'].decode("utf-8") == target_param:
+    if message['param_id'].encode("utf-8") == target_param:
         target_param_ready = 1
         target_param_value = message['param_value']
     else:
