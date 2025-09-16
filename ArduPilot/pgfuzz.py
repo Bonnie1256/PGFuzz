@@ -17,19 +17,20 @@ open("restart.txt", "w").close()
 c = 'gnome-terminal -- python ' + PGFUZZ_HOME + 'ArduPilot/open_simulator.py &'
 handle = Popen(c, stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
 print("opened open_simulator.py")
-time.sleep(90)
+time.sleep(30)
 c = 'gnome-terminal -- python ' + PGFUZZ_HOME + 'ArduPilot/fuzzing.py &'
 handle = Popen(c, stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
 print("opened fuzzing.py")
 while True:
-	time.sleep(1)
+    time.sleep(1)
 
-	f = open("restart.txt", "r")
+    f = open("restart.txt", "r")
 
-	if f.read() == "restart":
-		f.close()
-		open("restart.txt", "w").close()
+    if f.read() == "restart":
+        f.close()
+        open("restart.txt", "w").close()
 
-		c = 'gnome-terminal -- python ' + PGFUZZ_HOME + 'ArduPilot/open_simulator.py &'
-		handle = Popen(c, stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
-	
+        c = 'gnome-terminal -- python ' + PGFUZZ_HOME + 'ArduPilot/open_simulator.py &'
+        handle = Popen(c, stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
+        print("opened open_simulator.py")
+

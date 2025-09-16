@@ -189,7 +189,7 @@ def check_liveness():
         else:
             heartbeat_cnt = 0
 
-        time.sleep(5)
+        time.sleep(0.5)
 
 
 # ------------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ def set_preconditions(filepath):
                                   row[0].encode("ascii")[:16],
                                   float(row[1]),
                                   mavutil.mavlink.MAV_PARAM_TYPE_REAL32)
-        time.sleep(1)
+        time.sleep(0.1)
 
         print("[Set_preconditions] %s = %s" % (row[0], row[1]))
 
@@ -277,7 +277,7 @@ def re_launch():
 
     home_altitude = current_altitude
 
-    time.sleep(5)
+    time.sleep(0.5)
 
     # Initializing RC channels
     global required_min_thr
@@ -289,14 +289,14 @@ def re_launch():
     set_rc_channel_pwm(2, 1500)
     set_rc_channel_pwm(4, 1500)
 
-    time.sleep(3)
+    time.sleep(0.3)
 
     # Step 2. Reboot the RV's control program
     f = open("shared_variables.txt", "w")
     f.write("reboot")
     f.close()
-
-    time.sleep(48)
+    print("wrote reboot to shared_variables.txt")
+    time.sleep(20)
 
     mutated_log = open("mutated_log.txt", "w")
     mutated_log.close()
@@ -304,12 +304,19 @@ def re_launch():
     # Step 3. reset preconditions to fuzz the target policy
     global Precondition_path
     set_preconditions(Precondition_path)
+    print("set preconditions from %s" % Precondition_path)
 
     # Step 4. re-take off the vehicle
+    print("sending mode guided")
+    mode_id = master.mode_mapping()['GUIDED']
     master.mav.set_mode_send(
         master.target_system,
         mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
-        4)
+        mode_id)
+    master.mav.set_mode_send(
+        master.target_system,
+        mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
+        mode_id)
 
     # Wait for finishing the landing
     while True:
@@ -317,7 +324,7 @@ def re_launch():
             break
         time.sleep(0.2)
 
-    time.sleep(3)
+    time.sleep(0.3)
 
     # Arming
     master.mav.command_long_send(
@@ -327,7 +334,7 @@ def re_launch():
         0,
         1, 0, 0, 0, 0, 0, 0)
 
-    time.sleep(3)
+    time.sleep(0.05)
 
     master.mav.command_long_send(
         master.target_system,  # target_system
@@ -342,13 +349,13 @@ def re_launch():
         0,  # param6
         100)  # param7- altitude
 
-    time.sleep(25)
+    time.sleep(2.5)
     goal_throttle = 1500
 
 
 # ------------------------------------------------------------------------------------
 def verify_real_number(item):
-    """ Method to find if an 'item'is real number"""
+    """ Method to find if an 'item' is real number"""
 
     item = str(item).strip()
     if not (item):
@@ -431,7 +438,7 @@ def change_parameter(selected_param):
 
     write_log(print_param)
 
-    time.sleep(3)
+    time.sleep(0.3)
 
 
 # ------------------------------------------------------------------------------------
@@ -1100,7 +1107,7 @@ def calculate_distance(guidance):
     target_param = "CHUTE_ALT_MIN"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     if target_param_value > 0:
@@ -1130,7 +1137,7 @@ def calculate_distance(guidance):
     target_param = "RTL_ALT"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     # Convert centimeters to meters
@@ -1174,7 +1181,7 @@ def calculate_distance(guidance):
     target_param = "RTL_ALT"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     # Convert centimeters to meters
@@ -1226,7 +1233,7 @@ def calculate_distance(guidance):
     target_param = "RTL_ALT"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     # Convert centimeters to meters
@@ -1435,7 +1442,7 @@ def calculate_distance(guidance):
     target_param = "EK2_ALT_SOURCE"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     # Convert centimeters to meters
@@ -1705,7 +1712,7 @@ def calculate_distance(guidance):
     target_param = "LAND_SPEED_HIGH"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     # If 'LAND_SPEED_HIGH' configuration parameter is zero then WPNAV_SPEED_DN is used.
@@ -1719,7 +1726,7 @@ def calculate_distance(guidance):
         target_param = "WPNAV_SPEED_DN"
         count = 0
         while target_param_ready == 0 and count < 5:
-            time.sleep(1)
+            time.sleep(0.1)
             count += 1
 
     expected_landing_speed = target_param_value
@@ -1767,7 +1774,7 @@ def calculate_distance(guidance):
     target_param = "LAND_SPEED"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     expected_landing_speed = target_param_value
@@ -1871,7 +1878,7 @@ def calculate_distance(guidance):
     target_param = "SIM_BARO_DISABLE"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     # If 'SIM_BARO_DISABLE' configuration parameter is zero then a barometer sensor is activated and used.
@@ -1910,7 +1917,7 @@ def calculate_distance(guidance):
     target_param = "FS_THR_VALUE"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     fs_thr_val = target_param_value
@@ -1945,7 +1952,7 @@ def calculate_distance(guidance):
     target_param = "FS_THR_VALUE"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     fs_thr_val = target_param_value
@@ -1986,7 +1993,7 @@ def calculate_distance(guidance):
     target_param = "PILOT_SPEED_UP"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     pilot_speed_vertical = target_param_value
@@ -2100,7 +2107,7 @@ def calculate_distance(guidance):
     target_param = "FS_EKF_ACTION"
     count = 0
     while target_param_ready == 0 and count < 5:
-        time.sleep(1)
+        time.sleep(0.1)
         count += 1
 
     expected_flight_mode_from_FS = target_param_value
@@ -2194,7 +2201,7 @@ def throttle_th():
 
     while True:
         set_rc_channel_pwm(3, goal_throttle)
-        time.sleep(0.2)
+        time.sleep(0.02)
 
 
 # ------------------------------------------------------------------------------------
@@ -2534,7 +2541,7 @@ def main(argv):
         print(mavutil.mavlink.enums['MAV_RESULT'][ack_msg['result']].description)
         break
 
-    time.sleep(1)
+    time.sleep(0.05)
 
     master.mav.command_long_send(
         master.target_system,  # target_system
@@ -2562,7 +2569,7 @@ def main(argv):
         break
 
     # This is for testing A.RTL1
-    time.sleep(25)
+    time.sleep(2.5)
     # time.sleep(3)
 
 
@@ -2580,7 +2587,7 @@ def main(argv):
     # Set default throttle
     set_rc_channel_pwm(3, 1500)
 
-    time.sleep(3)
+    time.sleep(0.3)
 
     t2 = threading.Thread(target=read_loop, args=())
     t2.daemon = True
@@ -2625,7 +2632,7 @@ def main(argv):
             pick_up_cmd()
 
             # Calculate distances to evaluate effect of the executed input
-            time.sleep(4)
+            time.sleep(0.4)
             calculate_distance(guidance="true")
             goal_throttle = 1500
 

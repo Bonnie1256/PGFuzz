@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from subprocess import *
 #import subprocess,time,psutil
 
@@ -13,7 +15,7 @@ ARDUPILOT_HOME = "/home/bonnie/PGFuzz/ardupilot_pgfuzz/"
 # if ARDUPILOT_HOME is None:
 #     raise Exception("ARDUPILOT_HOME environment variable is not set!")
 
-c = ARDUPILOT_HOME + 'Tools/autotest/sim_vehicle.py -v ArduCopter --console --map -w'
+c = ARDUPILOT_HOME + 'Tools/autotest/sim_vehicle.py -v ArduCopter -S 40 --console --map --debug -w'
 #c = '~/ardupilot_pgfuzz/Tools/autotest/sim_vehicle.py -v ArduCopter --console --map -w' 
 
 #handle = Popen(c, stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
