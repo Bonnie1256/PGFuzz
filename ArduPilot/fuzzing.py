@@ -802,7 +802,7 @@ def read_loop():
 # --------------------- (End) READ Robotic Vehicle's states ------------------------
 # ------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------
-def store_mutated_inputs():
+def store_mutated_inputs(policy):
     global Policy_violation_cnt
     Policy_violation_cnt += 1
 
@@ -816,7 +816,7 @@ def store_mutated_inputs():
     # './policies/chute/*.txt'
     file_name = ""
     file_name += "./policy_violations/"
-    file_name += str(Policy_violation_cnt)
+    file_name += str(Policy_violation_cnt) + policy
     file_name += ".txt"
 
     f2 = open(file_name, "w")
@@ -841,7 +841,7 @@ def print_distance(G_dist, P_dist, length, policy, guid):
     print("#-----------------------------------------------------------------------------")
 
     if G_dist < 0:
-        store_mutated_inputs()
+        store_mutated_inputs(policy)
 
     global Current_policy_P_length
     global Previous_distance

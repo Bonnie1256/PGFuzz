@@ -18,7 +18,8 @@ c = 'gnome-terminal -- python ' + PGFUZZ_HOME + 'ArduPilot/open_simulator.py &'
 handle = Popen(c, stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
 print("opened open_simulator.py")
 time.sleep(90)
-c = 'gnome-terminal -- python ' + PGFUZZ_HOME + 'ArduPilot/fuzzing.py &'
+# c = 'gnome-terminal -- python ' + PGFUZZ_HOME + 'ArduPilot/fuzzing.py &'
+c = 'gnome-terminal -- bash -lc "python ' + PGFUZZ_HOME + 'ArduPilot/fuzzing.py > original_fuzz.log 2>&1"'
 handle = Popen(c, stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
 print("opened fuzzing.py")
 while True:
