@@ -29,6 +29,9 @@ import re
 import math
 from optparse import OptionParser
 import sys, os, getopt
+import glob
+from typing import List, Dict, Tuple, Optional
+
 
 # ------------------------------------------------------------------------------------
 # Global variables
@@ -369,59 +372,60 @@ def verify_real_number(item):
 
 
 # ------------------------------------------------------------------------------------
-def change_parameter(selected_param):
+def change_parameter(param_name, param_num):
     global Guidance_decision
     global Current_input
     global Current_input_val
 
-    print("# [Change_parameter()] selected params: %s" % read_inputs.param_name[selected_param])
+    # print("# [Change_parameter()] selected params: %s" % read_inputs.param_name[selected_param])
+    #
+    # no_range = 0
+    # param_name = read_inputs.param_name[selected_param]
 
-    no_range = 0
-    param_name = read_inputs.param_name[selected_param]
+    # if Guidance_decision == True:
+    #     Current_input_val = match_cmd(cmd=param_name)
+    #
+    # range_min = read_inputs.param_min[selected_param]
+    # range_max = read_inputs.param_max[selected_param]
+    # param_value = 0
+    #
+    # # Step 1. Check whether the selected parameter has an valid range or not
+    # if range_min == 'X':
+    #     no_range = 1
+    #     param_value = random.randint(PARAM_MIN, PARAM_MAX)
+    #     print("[param] selected params: %s, there is no min of valid range, random param value:%d" % (
+    #     read_inputs.param_name[selected_param], param_value))
+    #
+    # elif verify_real_number(range_min) == True:
+    #     no_range = 0
+    #     if range_min.isdigit() == True and range_max.isdigit() == True:
+    #         param_value = random.randint(int(range_min), int(range_max))
+    #         print("# [Change_parameter()] selected params: %s, min: %f, max: %f, random digit param value:%d" % (
+    #         read_inputs.param_name[selected_param], float(range_min), float(range_max), param_value))
+    #
+    #     elif range_min.isdigit() == False or range_max.isdigit() == False:
+    #         param_value = random.uniform(float(range_min), float(range_max))
+    #         print("# [Change_parameter()] selected params: %s, min: %f, max: %f, random real param value:%f" % (
+    #         read_inputs.param_name[selected_param], float(range_min), float(range_max), param_value))
+    #
+    # # Step 2. Change the parameter value
+    #
+    # # 1) Request parameter
+    # global required_min_thr
+    # if param_name == "FS_THR_VALUE":
+    #     param_value = random.randint(925, 975)
+    #     required_min_thr = param_value
+    #     print("# Required minimum throttle is %d" % param_value)
+    #
+    # if Current_input_val != "null":
+    #     param_value = float(Current_input_val)
+    #     print("@@@[Reuse stored input pair] (%s, %s)@@@" % (param_name, Current_input_val))
 
-    if Guidance_decision == True:
-        Current_input_val = match_cmd(cmd=param_name)
-
-    range_min = read_inputs.param_min[selected_param]
-    range_max = read_inputs.param_max[selected_param]
-    param_value = 0
-
-    # Step 1. Check whether the selected parameter has an valid range or not
-    if range_min == 'X':
-        no_range = 1
-        param_value = random.randint(PARAM_MIN, PARAM_MAX)
-        print("[param] selected params: %s, there is no min of valid range, random param value:%d" % (
-        read_inputs.param_name[selected_param], param_value))
-
-    elif verify_real_number(range_min) == True:
-        no_range = 0
-        if range_min.isdigit() == True and range_max.isdigit() == True:
-            param_value = random.randint(int(range_min), int(range_max))
-            print("# [Change_parameter()] selected params: %s, min: %f, max: %f, random digit param value:%d" % (
-            read_inputs.param_name[selected_param], float(range_min), float(range_max), param_value))
-
-        elif range_min.isdigit() == False or range_max.isdigit() == False:
-            param_value = random.uniform(float(range_min), float(range_max))
-            print("# [Change_parameter()] selected params: %s, min: %f, max: %f, random real param value:%f" % (
-            read_inputs.param_name[selected_param], float(range_min), float(range_max), param_value))
-
-    # Step 2. Change the parameter value
-
-    # 1) Request parameter
-    global required_min_thr
-    if param_name == "FS_THR_VALUE":
-        param_value = random.randint(925, 975)
-        required_min_thr = param_value
-        print("# Required minimum throttle is %d" % param_value)
-
-    if Current_input_val != "null":
-        param_value = float(Current_input_val)
-        print("@@@[Reuse stored input pair] (%s, %s)@@@" % (param_name, Current_input_val))
-
+    param_value = float(param_num)
     # 2) Set parameter value
     master.mav.param_set_send(master.target_system, master.target_component,
                               param_name.encode("ascii")[:16],
-                              param_value,
+                              float(param_value),
                               mavutil.mavlink.MAV_PARAM_TYPE_REAL32)
 
     # Log change parameter values
@@ -429,14 +433,14 @@ def change_parameter(selected_param):
     Current_input = param_name
     Current_input_val = str(param_value)
 
-    print_param = ""
-    print_param += "P "
-    print_param += param_name
-    print_param += " "
-    print_param += str(param_value)
-    print_param += "\n"
-
-    write_log(print_param)
+    # print_param = ""
+    # print_param += "P "
+    # print_param += param_name
+    # print_param += " "
+    # print_param += str(param_value)
+    # print_param += "\n"
+    #
+    # write_log(print_param)
 
     time.sleep(0.3)
 
@@ -446,7 +450,7 @@ def change_parameter(selected_param):
 def handle_heartbeat(msg):
     global heartbeat_cnt
     heartbeat_cnt += 1
-
+    print(f"heartbeat count {heartbeat_cnt}")
     global current_flight_mode
     global previous_flight_mode
 
@@ -457,7 +461,7 @@ def handle_heartbeat(msg):
 
     global drone_status
     drone_status = msg.system_status
-    # print("Drone status: %d, mavlink version: %d" % (drone_status, msg.mavlink_version))
+    print("Drone status: %d, mavlink version: %d" % (drone_status, msg.mavlink_version))
 
     is_armed = msg.base_mode & mavutil.mavlink.MAV_MODE_FLAG_SAFETY_ARMED
     is_enabled = msg.base_mode & mavutil.mavlink.MAV_MODE_FLAG_GUIDED_ENABLED
@@ -2236,69 +2240,71 @@ def match_cmd(cmd):
 
 
 # ------------------------------------------------------------------------------------
-def execute_cmd(num):
+def execute_cmd(cmd_name, cmd_val):
     global Current_input
     global Current_input_val
     global Guidance_decision
     rand = []
 
     # Each user command contains 7 parameters. We assign random values to these parameters.
-    for i in range(7):
-        rand.append(random.randint(1, 100))
+    # for i in range(7):
+    #     rand.append(random.randint(1, 100))
 
     # To do: Implement all if statements for all user commands
 
-    Current_input = read_inputs.cmd_name[num]
+    # Current_input = read_inputs.cmd_name[num]
+    Current_input = cmd_name
 
-    if Guidance_decision == True:
-        Current_input_val = match_cmd(cmd=Current_input)
+    # if Guidance_decision == True:
+    #     Current_input_val = match_cmd(cmd=Current_input)
 
-    if Current_input_val != "null":
-        print("@@@[Reuse stored input pair] (%s, %s)@@@" % (Current_input, Current_input_val))
+    # if Current_input_val != "null":
+    #     print("@@@[Reuse stored input pair] (%s, %s)@@@" % (Current_input, Current_input_val))
 
     # ------------------------(start) execute a selected command-------------------------
-    if read_inputs.cmd_name[num] == "RC1" or read_inputs.cmd_name[num] == "RC2" or read_inputs.cmd_name[num] == "RC4":
+    if cmd_name == "RC1" or cmd_name == "RC2" or cmd_name == "RC4":
         target_RC = 0
-        if Current_input_val == "null":
-            mutated_value = random.randint(1200, 1900)
-            Current_input_val = str(mutated_value)
-        else:
-            mutated_value = int(Current_input_val)
+        # if Current_input_val == "null":
+        #     # mutated_value = random.randint(1200, 1900)
+        #     Current_input_val = str(mutated_value)
+        # else:
+        #     mutated_value = int(Current_input_val)
+        rc_value = int(cmd_val)
 
-        if read_inputs.cmd_name[num] == "RC1":
+        if cmd_name == "RC1":
             target_RC = 1
-        elif read_inputs.cmd_name[num] == "RC2":
+        elif cmd_name == "RC2":
             target_RC = 2
-        elif read_inputs.cmd_name[num] == "RC4":
+        elif cmd_name == "RC4":
             target_RC = 4
 
-        set_rc_channel_pwm(target_RC, mutated_value)
+        set_rc_channel_pwm(target_RC, rc_value)
 
-    elif read_inputs.cmd_name[num] == "RC3":
+    elif cmd_name == "RC3":
         global goal_throttle
+        goal_throttle = int(cmd_val)
+        # if Current_input_val == "null":
+        #     goal_throttle = random.randint(1000, 2000)
+        #     Current_input_val = str(goal_throttle)
+        # else:
+        #     goal_throttle = int(Current_input_val)
 
-        if Current_input_val == "null":
-            goal_throttle = random.randint(1000, 2000)
-            Current_input_val = str(goal_throttle)
-        else:
-            goal_throttle = int(Current_input_val)
-
-    elif read_inputs.cmd_name[num] == "Flight_Mode":
+    elif cmd_name == "Flight_Mode":
         # Triggering a proper flight mode makes PGFUZZ quickly testing each policy
-        Current_input_val = read_inputs.cmd_number[num]
+        # Current_input_val = read_inputs.cmd_number[num]
 
-        if Current_input_val == "null":
-            rand_fligh_mode = random.randint(0, 18)
-            Current_input_val = str(rand_fligh_mode)
-        else:
-            rand_fligh_mode = int(Current_input_val)
-
+        # if Current_input_val == "null":
+        #     rand_fligh_mode = random.randint(0, 18)
+        #     Current_input_val = str(rand_fligh_mode)
+        # else:
+        #     rand_fligh_mode = int(Current_input_val)
+        flight_mode_val = int(cmd_val)
         master.mav.set_mode_send(
             master.target_system,
             mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
-            rand_fligh_mode)
+            flight_mode_val)
 
-    elif read_inputs.cmd_name[num] == "MAV_CMD_DO_PARACHUTE":
+    elif cmd_name == "MAV_CMD_DO_PARACHUTE":
         Current_input_val = "2"
 
         master.mav.command_long_send(
@@ -2307,31 +2313,58 @@ def execute_cmd(num):
             mavutil.mavlink.MAV_CMD_DO_PARACHUTE,
             0, 2, 0, 0, 0, 0, 0, 0)
     else:
-        if Current_input_val != "null" and "," in Current_input_val:
-            row = Current_input_val.rstrip().split(',')
-            for i in range(7):
-                rand[i] = int(row[i])
+        # import ipdb; ipdb.set_trace()
+        cmd_id = getattr(mavutil.mavlink, cmd_name, None)
+        if cmd_id is None:
+            print(f"Unknown MAVLink command: {cmd_name}")
+            return False
+        else:
+            print(f"cmd_name: {cmd_name}, cmd_id: {cmd_id}")
 
-        Current_input_val = str(rand[0])
-        Current_input_val += ","
-        Current_input_val += str(rand[1])
-        Current_input_val += ","
-        Current_input_val += str(rand[2])
-        Current_input_val += ","
-        Current_input_val += str(rand[3])
-        Current_input_val += ","
-        Current_input_val += str(rand[4])
-        Current_input_val += ","
-        Current_input_val += str(rand[5])
-        Current_input_val += ","
-        Current_input_val += str(rand[6])
+        # Parse parameters
+        params = [0] * 7
+        if cmd_val:
+            param_values = cmd_val.split(',')
+            for i, val in enumerate(param_values[:7]):
+                try:
+                    params[i] = int(val)
+                except ValueError:
+                    try:
+                        params[i] = float(val)
+                    except ValueError:
+                        params[i] = 0
 
         master.mav.command_long_send(
-            master.target_system,  # target_system
-            master.target_component,  # target_component
-            int(read_inputs.cmd_number[num]),
-            0,
-            rand[0], rand[1], rand[2], rand[3], rand[4], rand[5], rand[6])
+            master.target_system,
+            master.target_component,
+            cmd_id,
+            0, *params
+        )
+        # if Current_input_val != "null" and "," in Current_input_val:
+        #     row = Current_input_val.rstrip().split(',')
+        #     for i in range(7):
+        #         rand[i] = int(row[i])
+        #
+        # Current_input_val = str(rand[0])
+        # Current_input_val += ","
+        # Current_input_val += str(rand[1])
+        # Current_input_val += ","
+        # Current_input_val += str(rand[2])
+        # Current_input_val += ","
+        # Current_input_val += str(rand[3])
+        # Current_input_val += ","
+        # Current_input_val += str(rand[4])
+        # Current_input_val += ","
+        # Current_input_val += str(rand[5])
+        # Current_input_val += ","
+        # Current_input_val += str(rand[6])
+        #
+        # master.mav.command_long_send(
+        #     master.target_system,  # target_system
+        #     master.target_component,  # target_component
+        #     int(read_inputs.cmd_number[num]),
+        #     0,
+        #     rand[0], rand[1], rand[2], rand[3], rand[4], rand[5], rand[6])
     # ------------------------(end) execute a selected command-------------------------
 
     print("[Execute_cmd] (%s, %s)" % (Current_input, Current_input_val))
@@ -2347,23 +2380,23 @@ def execute_cmd(num):
 
 
 # ------------------------------------------------------------------------------------
-def execute_env(num):
+def execute_env(env_name, env_val):
     global Current_input
     global Current_input_val
     global Guidance_decision
 
     # To do: implement all if statements for all user commands
 
-    Current_input = read_inputs.env_name[num]
-
-    if Guidance_decision == True:
-        Current_input_val = match_cmd(cmd=Current_input)
-
-    if Current_input_val == "null":
-        rand = random.uniform(0, 100)
-        Current_input_val = str(rand)
-    else:
-        print("@@@[Reuse stored input pair] (%s, %s)@@@" % (Current_input, Current_input_val))
+    # Current_input = read_inputs.env_name[num]
+    Current_input = env_name
+    # if Guidance_decision == True:
+    #     Current_input_val = match_cmd(cmd=Current_input)
+    Current_input_val = env_val
+    # if Current_input_val == "null":
+    #     rand = random.uniform(0, 100)
+    #     Current_input_val = str(rand)
+    # else:
+    #     print("@@@[Reuse stored input pair] (%s, %s)@@@" % (Current_input, Current_input_val))
 
     master.mav.param_set_send(master.target_system, master.target_component,
                               Current_input.encode("ascii")[:16],
@@ -2381,7 +2414,26 @@ def execute_env(num):
     print_env += "\n"
     write_log(print_env)
 
+def execute_command(cmd: Dict) -> bool:
+    """Execute a single command"""
+    try:
+        cmd_type = cmd['type']
+        cmd_name = cmd['name']
+        cmd_value = cmd['value']
 
+        if cmd_type == 'P':  # Parameter
+            return change_parameter(cmd_name, cmd_value)
+        elif cmd_type == 'C':  # Command
+            return execute_cmd(cmd_name, cmd_value)
+        elif cmd_type == 'E':  # Environmental
+            return execute_env(cmd_name, cmd_value)
+        else:
+            print(f"[VERIFIER] Unknown command type: {cmd_type}")
+            return False
+
+    except Exception as e:
+        print(f"[VERIFIER] Error executing command {cmd}: {e}")
+        return False
 # ------------------------------------------------------------------------------------
 def pick_up_cmd():
     global Current_input
@@ -2417,6 +2469,38 @@ def pick_up_cmd():
     # 3) Environmental factors
     elif input_type == 3:
         execute_env(num=random.randint(0, len(read_inputs.env_name) - 1))
+
+def parse_violation_file(filepath: str) -> List[Dict]:
+    """Parse a violation file and return list of commands"""
+    commands = []
+
+    try:
+        with open(filepath, 'r') as f:
+            for line_num, line in enumerate(f, 1):
+                line = line.strip()
+                if not line:
+                    continue
+
+                parts = line.split(' ', 2)
+                if len(parts) < 2:
+                    continue
+
+                cmd_type = parts[0]
+                cmd_name = parts[1]
+                cmd_value = parts[2] if len(parts) > 2 else ""
+
+                commands.append({
+                    'line': line_num,
+                    'type': cmd_type,
+                    'name': cmd_name,
+                    'value': cmd_value,
+                    'original': line
+                })
+
+    except Exception as e:
+        print(f"Error parsing {filepath}: {e}")
+
+    return commands
 
 # ------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------
@@ -2554,7 +2638,7 @@ def main_fuzz_loop(argv):
         0,  # param4
         0,  # param5
         0,  # param6
-        100)  # param7- altitude
+        200)  # param7- altitude
 
     ack = False
     while not ack:
@@ -2569,7 +2653,7 @@ def main_fuzz_loop(argv):
         break
 
     # This is for testing A.RTL1
-    time.sleep(2.5)
+    time.sleep(4)
     # time.sleep(3)
 
 
@@ -2587,7 +2671,7 @@ def main_fuzz_loop(argv):
     # Set default throttle
     set_rc_channel_pwm(3, 1500)
 
-    time.sleep(0.3)
+    time.sleep(5) # make sure the drone is holding
 
     t2 = threading.Thread(target=read_loop, args=())
     t2.daemon = True
@@ -2612,11 +2696,26 @@ def main_fuzz_loop(argv):
     t3.daemon = True
     t3.start()
 
-    # Main loop
-    while True:
+    violations_dir = "./test_fuzzing_validation"
+    violation_files = glob.glob(os.path.join(violations_dir, "*.txt"))
 
+    for i, violation_file in enumerate(violation_files):
+        print(f"\nProgress: {i + 1}/{len(violation_files)} {violation_file}")
 
+        # Skip empty files (no commands)
+        try:
+            with open(violation_file, 'r') as f:
+                has_content = any(line.strip() for line in f)
+        except Exception:
+            has_content = False
 
+        if not has_content:
+            print(f"Skipping empty file: {os.path.basename(violation_file)}")
+            continue
+
+        commands = parse_violation_file(violation_file)
+        print(commands)
+        print(f"drone_status before executing commands: {drone_status}")
         # print("[Debug] drone_status:%d" %drone_status)
 
         # if RV is still active state
@@ -2629,11 +2728,13 @@ def main_fuzz_loop(argv):
             # Calculate propositional and global distances
             calculate_distance(guidance="false")
 
-            pick_up_cmd()
+            for i, cmd in enumerate(commands):
+                print(f"Executing command {i + 1}/{len(commands)}: {cmd['original']}")
+                execute_command(cmd)
 
             # Calculate distances to evaluate effect of the executed input
             time.sleep(0.4)
-            calculate_distance(guidance="true")
+            calculate_distance(guidance="false")
             goal_throttle = 1500
 
             for i in range(4):
