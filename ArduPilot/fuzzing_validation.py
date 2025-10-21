@@ -175,8 +175,9 @@ Current_policy_P_length = 5
 # Debug parameter
 PRINT_DEBUG = 0
 
+testfile = sys.argv[1].split("/")[-1].strip(".txt")
 start_log_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M")
-log_file = f"fuzzing_log/validate_{start_log_time}"
+log_file = f"fuzzing_log/validate_{start_log_time}_{testfile}"
 
 # ------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------
@@ -831,23 +832,23 @@ def store_mutated_inputs(policy):
     for i in range(3):
         log_print("***************Policy violation!***************")
 
-    f1 = open("mutated_log.txt", "r")
-    lines = f1.readlines()
+    # f1 = open("mutated_log.txt", "r")
+    # lines = f1.readlines()
 
-    # Store the mutated inputs as a txt file
-    # './policies/chute/*.txt'
-    file_name = ""
-    file_name += "./policy_violations/"
-    file_name += str(Policy_violation_cnt) + "_" + policy
-    file_name += ".txt"
+    # # Store the mutated inputs as a txt file
+    # # './policies/chute/*.txt'
+    # file_name = ""
+    # file_name += "./policy_violations/"
+    # file_name += str(Policy_violation_cnt) + "_" + policy
+    # file_name += ".txt"
 
-    f2 = open(file_name, "w")
-    f2.writelines(lines)
-    f1.close()
-    f2.close()
+    # f2 = open(file_name, "w")
+    # f2.writelines(lines)
+    # f1.close()
+    # f2.close()
 
-    mutated_log = open("mutated_log.txt", "w")
-    mutated_log.close()
+    # mutated_log = open("mutated_log.txt", "w")
+    # mutated_log.close()
 
 
 # ------------------------------------------------------------------------------------
